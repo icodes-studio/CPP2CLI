@@ -1,14 +1,4 @@
-#include <iostream>
-
-#define _CRTDBG_MAP_ALLOC
-#include <crtdbg.h>
-
-#ifdef _DEBUG
-    #ifndef DEBUG_NEW
-        #define DEBUG_NEW new (_NORMAL_BLOCK, __FILE__, __LINE__)
-        #define new DEBUG_NEW
-    #endif
-#endif
+#include "Common.h"
 
 int main()
 {
@@ -16,7 +6,11 @@ int main()
     _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 #endif
 
+    TODO(aaaaaaaa);
     float* data = new float;
+    TRACE(_T("Hello New World"));
 
     std::cout << "Hello World!\n";
+
+    system("pause");
 }

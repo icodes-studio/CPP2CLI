@@ -12,6 +12,9 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CPP.Common", "CPP.Common\CPP.Common.vcxproj", "{C5DE8744-94E6-438B-9EF0-43F2E9C6C482}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CPP.Console", "CPP.Console\CPP.Console.vcxproj", "{F002195F-8A03-46EF-9C19-9CBF6A001715}"
+	ProjectSection(ProjectDependencies) = postProject
+		{C5DE8744-94E6-438B-9EF0-43F2E9C6C482} = {C5DE8744-94E6-438B-9EF0-43F2E9C6C482}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CPP.Plugin", "CPP.Plugin\CPP.Plugin.vcxproj", "{20C6F0D2-599C-40D8-8808-6CE283DF4DCA}"
 EndProject
