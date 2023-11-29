@@ -91,3 +91,4 @@
 #define BUFSIZE_HUGE   4096
 
 #include "iTrace.h"
+#include "iBuffer.h"

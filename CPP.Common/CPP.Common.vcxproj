@@ -144,6 +144,7 @@
     <ClInclude Include="Common.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="i.h" />
+    <ClInclude Include="iBuffer.h" />
     <ClInclude Include="iTrace.h" />
     <ClInclude Include="pch.h" />
   </ItemGroup>
