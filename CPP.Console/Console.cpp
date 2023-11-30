@@ -1,4 +1,6 @@
 #include "Common.h"
+#include <fcntl.h>
+#include <io.h>
 
 int main()
 {
@@ -6,28 +8,29 @@ int main()
     _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 #endif
 
-    TODO(aaaaaaaa);
-    float* data = new float;
-    TRACE(_T("Hello New World"));
+    TODO(todo warning message);
+    float* mleak = new float;
+    TRACE(_T("Hello World"));
 
-    const char* lpsz = "동해물과";
-    int ret = (int)strlen(lpsz) + 1;
-    int convert = MultiByteToWideChar(CP_ACP, 0, lpsz, ret, NULL, 0);
-    iBuffer<WCHAR> pszW(convert);
-    pszW[0] = 99;
-    pszW[1] = 99;
-    pszW[2] = 99;
-    pszW[3] = 99;
-    pszW[4] = 99;
-    ret = MultiByteToWideChar(CP_ACP, 0, "동해물과", ret, pszW, convert);
+    const char* lpsz = "헬로월드";
+    int wsize = MultiByteToWideChar(CP_ACP, 0, lpsz, -1, NULL, 0);
+    iBuffer<WCHAR> text(wsize);
+    MultiByteToWideChar(CP_ACP, 0, lpsz, -1, text, wsize);
 
+    ASSERT(text);
+    ASSERT(text != NULL);
+    ASSERT(text != __nullptr);
 
+    _setmode(_fileno(stdout), _O_U16TEXT);
+    std::wcout << text[0] << text[1] << text[2] << text[3] << L" - " << (WCHAR*)text << std::endl;
 
+    _setmode(_fileno(stdout), _O_TEXT);
+    std::cout << lpsz << std::endl;
 
-    UINT bytes = static_cast<UINT>(ret) * static_cast<UINT>(sizeof(OLECHAR));
-    BSTR temp = SysAllocStringByteLen((LPCSTR)(LPWSTR)pszW, bytes);
-
-    std::cout << "Hello World!\n";
+    text.Release();
+    ASSERT(!text);
+    ASSERT(text == NULL);
+    ASSERT(text == __nullptr);
 
     system("pause");
 }

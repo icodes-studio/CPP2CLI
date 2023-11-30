@@ -22,14 +22,14 @@ class iBuffer
 
     public: ~iBuffer()
     {
-        if (buffer != reinterpret_cast<T*>(fixedBuffer))
-            FreeHeap();
+        Release();
     }
 
     public: operator T* () const
     {
         return buffer;
     }
+
 
     public: T* Allocate(size_t elements)
     {
@@ -95,6 +95,15 @@ class iBuffer
         return temp;
     }
 
+    public: void Release()
+    {
+        if (buffer != reinterpret_cast<T*>(fixedBuffer))
+            FreeHeap();
+
+        size = 0;
+        buffer = NULL;
+    }
+
     public: size_t Size()
     {
         return size;
@@ -113,17 +122,17 @@ class iBuffer
     public: BOOL operator == (int null) const
     {
         ASSERT(null == 0);
-        return (!*this);
+        return operator !();
     }
 
     public: BOOL operator == (decltype(__nullptr)) const
     {
-        return (*this == 0);
+        return operator == (0);
     }
 
     public: BOOL operator != (decltype(__nullptr)) const
     {
-        return (*this != 0);
+        return operator != (0);
     }
 
     private: void AllocateHeap(size_t bytes)
