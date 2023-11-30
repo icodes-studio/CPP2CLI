@@ -92,3 +92,5 @@
 
 #include "iTrace.h"
 #include "iBuffer.h"
+#include "iAutoLock.h"
+#include "iPlex.h"

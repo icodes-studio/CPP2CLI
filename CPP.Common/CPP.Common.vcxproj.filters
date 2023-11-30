@@ -27,6 +27,12 @@
     <ClInclude Include="iBuffer.h">
       <Filter>i</Filter>
     </ClInclude>
+    <ClInclude Include="iAutoLock.h">
+      <Filter>i</Filter>
+    </ClInclude>
+    <ClInclude Include="iPlex.h">
+      <Filter>i</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="iTrace.cpp">
