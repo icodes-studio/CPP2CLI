@@ -94,3 +94,4 @@
 #include "iBuffer.h"
 #include "iAutoLock.h"
 #include "iPlex.h"
+#include "iFixedAlloc.h"

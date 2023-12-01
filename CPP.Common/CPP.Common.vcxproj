@@ -146,6 +146,7 @@
     <ClInclude Include="i.h" />
     <ClInclude Include="iAutoLock.h" />
     <ClInclude Include="iBuffer.h" />
+    <ClInclude Include="iFixedAlloc.h" />
     <ClInclude Include="iPlex.h" />
     <ClInclude Include="iTrace.h" />
     <ClInclude Include="pch.h" />

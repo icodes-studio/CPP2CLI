@@ -2,8 +2,16 @@
 #include <fcntl.h>
 #include <io.h>
 
+struct Node
+{
+    public: Node* next;
+    public: Node* prev;
+    public: float data;
+};
+
 int main()
 {
+    // TRACE
 #ifdef _DEBUG
     _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 #endif
@@ -12,6 +20,7 @@ int main()
     float* mleak = new float;
     TRACE(_T("Hello World\n"));
 
+    // iBuffer
     const char* lpsz = "Çï·Î¿ùµå";
     int wsize = MultiByteToWideChar(CP_ACP, 0, lpsz, -1, NULL, 0);
     iBuffer<WCHAR> wtext(wsize);
@@ -36,6 +45,35 @@ int main()
     ASSERT(!wtext);
     ASSERT(wtext == NULL);
     ASSERT(wtext == __nullptr);
+
+    // iPlex
+    int memoryBlockCount = 10;
+    struct iPlex* memoryBlocks = NULL;
+
+    for (int i = 0; i < 2; i++)
+    {
+        iPlex* newBlock = iPlex::Create(memoryBlocks, memoryBlockCount, sizeof(Node));
+        Node* node = (Node*)newBlock->GetData();
+        node = node + (memoryBlockCount - 1);
+
+        Node* freeNode = NULL;
+        for (int i = memoryBlockCount - 1; i >= 0; i--, node--)
+        {
+            node->next = freeNode;
+            freeNode = node;
+        }
+
+        while (freeNode != NULL)
+        {
+            Node* newNode = freeNode;
+            freeNode = freeNode->next;
+        }
+    }
+
+    memoryBlocks->FreeDataChain();
+
+
+
 
 
 
