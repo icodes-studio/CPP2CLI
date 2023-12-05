@@ -7,6 +7,7 @@
 #include <assert.h>
 
 #include <tchar.h>
+#include <mbstring.h>
 #include <oaidl.h>
 #include <iostream>
 
@@ -95,3 +96,12 @@
 #include "iAutoLock.h"
 #include "iPlex.h"
 #include "iFixedAlloc.h"
+#include "iTemplate.h"
+#include "iList.h"
+#include "iArray.h"
+#include "iString.h"
+#include "iMap.h"
+//#include "iVariant.h"
+//#include "iSingleton.h"
+//#include "iObject.h"
+//#include "iPtr.h"

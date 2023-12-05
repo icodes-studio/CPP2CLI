@@ -144,14 +144,20 @@
     <ClInclude Include="Common.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="i.h" />
+    <ClInclude Include="iArray.h" />
     <ClInclude Include="iAutoLock.h" />
     <ClInclude Include="iBuffer.h" />
     <ClInclude Include="iFixedAlloc.h" />
+    <ClInclude Include="iList.h" />
+    <ClInclude Include="iMap.h" />
     <ClInclude Include="iPlex.h" />
+    <ClInclude Include="iString.h" />
+    <ClInclude Include="iTemplate.h" />
     <ClInclude Include="iTrace.h" />
     <ClInclude Include="pch.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="iString.cpp" />
     <ClCompile Include="iTrace.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

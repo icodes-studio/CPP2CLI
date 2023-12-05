@@ -36,6 +36,21 @@
     <ClInclude Include="iFixedAlloc.h">
       <Filter>i</Filter>
     </ClInclude>
+    <ClInclude Include="iTemplate.h">
+      <Filter>i</Filter>
+    </ClInclude>
+    <ClInclude Include="iList.h">
+      <Filter>i</Filter>
+    </ClInclude>
+    <ClInclude Include="iArray.h">
+      <Filter>i</Filter>
+    </ClInclude>
+    <ClInclude Include="iMap.h">
+      <Filter>i</Filter>
+    </ClInclude>
+    <ClInclude Include="iString.h">
+      <Filter>i</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="iTrace.cpp">
@@ -43,6 +58,9 @@
     </ClCompile>
     <ClCompile Include="pch.cpp">
       <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="iString.cpp">
+      <Filter>i</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

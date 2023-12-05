@@ -2,6 +2,17 @@
 
 class iFixedAlloc
 {
+    protected: struct iNode
+    {
+        public: iNode* next;
+    };
+
+    protected: UINT allocSize;
+    protected: UINT blockSize;
+    protected: iPlex* blocks;
+    protected: iNode* freeNode;
+    protected: CRITICAL_SECTION cs;
+
     public: iFixedAlloc(UINT allocSize = 64, UINT blockSize = 64)
     {
         ASSERT(allocSize >= sizeof(iNode));
@@ -12,18 +23,18 @@ class iFixedAlloc
         this->freeNode = NULL;
         this->blocks = NULL;
 
-        InitializeCriticalSection(&protect);
+        InitializeCriticalSection(&cs);
     }
 
     public: ~iFixedAlloc()
     {
         FreeAll();
-        DeleteCriticalSection(&protect);
+        DeleteCriticalSection(&cs);
     }
 
     public: void FreeAll()
     {
-        iAutoLock lock(&protect);
+        iAutoLock lock(&cs);
         blocks->FreeDataChain();
         blocks = NULL;
         freeNode = NULL;
@@ -31,7 +42,7 @@ class iFixedAlloc
 
     public: void* Alloc()
     {
-        iAutoLock lock(&protect);
+        iAutoLock lock(&cs);
 
         if (freeNode == NULL)
         {
@@ -59,7 +70,7 @@ class iFixedAlloc
     {
         if (p != NULL)
         {
-            iAutoLock lock(&protect);
+            iAutoLock lock(&cs);
             iNode* node = (iNode*)p;
             node->next = freeNode;
             freeNode = node;
@@ -70,26 +81,15 @@ class iFixedAlloc
     { 
         return allocSize;
     }
-
-    protected: struct iNode
-    {
-        public: iNode* next;
-    };
-
-    protected: UINT allocSize;
-    protected: UINT blockSize;
-    protected: iPlex* blocks;
-    protected: iNode* freeNode;
-    protected: CRITICAL_SECTION protect;
 };
 
 #ifndef _DEBUG
     #define DECLARE_FIXED_ALLOC(class_name)                             \
     public: void* operator new(size_t size)                             \
     {                                                                   \
-        ASSERT(size == s_alloc.GetAllocSize());                         \
+        ASSERT(size == alloc.GetAllocSize());                           \
         UNUSED(size);                                                   \
-        return s_alloc.Alloc();                                         \
+        return alloc.Alloc();                                           \
     }                                                                   \
     public: void* operator new(size_t, void* p)                         \
     {                                                                   \
@@ -97,18 +97,18 @@ class iFixedAlloc
     }                                                                   \
     public: void operator delete(void* p)                               \
     {                                                                   \
-        s_alloc.Free(p);                                                \
+        alloc.Free(p);                                                  \
     }                                                                   \
     public: void* operator new(size_t size, LPCSTR, int)                \
     {                                                                   \
-        ASSERT(size == s_alloc.GetAllocSize());                         \
+        ASSERT(size == alloc.GetAllocSize());                           \
         UNUSED(size);                                                   \
-        return s_alloc.Alloc();                                         \
+        return alloc.Alloc();                                           \
     }                                                                   \
-    protected: static iFixedAlloc s_alloc;
+    protected: static iFixedAlloc alloc;
 
     #define IMPLEMENT_FIXED_ALLOC(class_name, block_size)               \
-    iFixedAlloc class_name::s_alloc(sizeof(class_name), block_size)
+    iFixedAlloc class_name::alloc(sizeof(class_name), block_size)
 #else
     #define DECLARE_FIXED_ALLOC(class_name)
     #define IMPLEMENT_FIXED_ALLOC(class_name, block_size)
