@@ -20,15 +20,15 @@ template <> UINT HashKey <LPCWSTR>(LPCWSTR key)
     return hash;
 }
 
-template <> UINT HashKey <const iCString&>(const iCString& key)
+template <> UINT HashKey <const iString&>(const iString& key)
 {
     return HashKey <LPCTSTR>((LPCTSTR)key);
 }
 
-template <> void ConstructElements <iCString>(iCString* elements, int count)
+template <> void ConstructElements <iString>(iString* elements, int count)
 {
     ASSERT(count == 0 || elements);
 
     for (; count--; ++elements)
-        memcpy(elements, &iCString::GetEmptyString(), sizeof(*elements));
+        memcpy(elements, &iString::GetEmptyString(), sizeof(*elements));
 }

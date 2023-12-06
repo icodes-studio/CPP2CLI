@@ -96,5 +96,44 @@ int main()
     testMap[10] = { NULL, NULL, 10.f };
     testMap.RemoveKey(10);
 
+    // iString
+    iString str1;
+    iString str2("동해물과 백두산이");
+    iString str3 = str2;
+    str2 = "";
+    str1 = str2;
+    str1.FormatMessage(_T("%1!*.*s! %3 %4!*s!"), 4, 2, _T("Bill"), _T("Bob"), 6, _T("Bill"));
+    BSTR bstr = str3.AllocSysString();
+    TRACE(bstr);
+    SysFreeString(bstr);
+    iString str4(_T('A'), 10);
+    iMap<iString, iString> stringMap;
+    stringMap[_T("111")] = _T("111");
+    stringMap[_T("222")] = _T("222");
+    stringMap[_T("333")] = _T("333");
+    stringMap[_T("444")] = _T("444");
+    for (POSITION pos = stringMap.GetStartPosition(); pos != NULL;)
+    {
+        iString key, value;
+        stringMap.GetNext(pos, key, value);
+        TRACE(_T("key:%s, value:%s\n"), key, value);
+    }
+    const auto& list = stringMap.ToList();
+    for (POSITION pos = list.GetHeadPosition(); pos != NULL;)
+    {
+        auto node = list.GetNext(pos);
+        TRACE(_T("key:%s, value:%s\n"), node->key, node->value);
+    }
+
+    // iVariant
+    iVariant a("aaaaa");
+    iVariant b((long long)1234567891234567891);
+    a = b;
+    TRACE(a);
+    a = (const iVariant*)&b;
+    a[_T("1111")] = 10;
+    a[_T("222")] = _T("동해물과");
+    a.Log();
+
     system("pause");
 }

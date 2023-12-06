@@ -38,12 +38,12 @@ struct iStringDataT
 template <class T>
 class iStringT
 {
-    protected: typedef class iStringType<T>::XCHAR XCHAR;
-    protected: typedef class iStringType<T>::LPXSTR LPXSTR;
-    protected: typedef class iStringType<T>::LPCXSTR LPCXSTR;
-    protected: typedef class iStringType<T>::YCHAR YCHAR;
-    protected: typedef class iStringType<T>::LPYSTR LPYSTR;
-    protected: typedef class iStringType<T>::LPCYSTR LPCYSTR;
+    protected: typedef typename iStringType<T>::XCHAR XCHAR;
+    protected: typedef typename iStringType<T>::LPXSTR LPXSTR;
+    protected: typedef typename iStringType<T>::LPCXSTR LPCXSTR;
+    protected: typedef typename iStringType<T>::YCHAR YCHAR;
+    protected: typedef typename iStringType<T>::LPYSTR LPYSTR;
+    protected: typedef typename iStringType<T>::LPCYSTR LPCYSTR;
 
     protected: LPXSTR stringData;
     protected: static T chNil;
@@ -62,7 +62,7 @@ class iStringT
         Initialize();
     }
 
-    public: iCStringT(const iCStringT& str)
+    public: iStringT(const iStringT& str)
     {
         ASSERT(str.GetData()->refs != 0);
 
@@ -78,43 +78,55 @@ class iStringT
         }
     }
 
-    public: iCStringT(const VARIANT& vt)
+    public: iStringT(const VARIANT& vt)
     {
         Initialize();
         *this = vt;
     }
 
-    public: iCStringT(LPCXSTR str)
+    public: iStringT(LPCXSTR str)
     {
         Initialize();
         *this = str;
     }
 
-    public: iCStringT(LPCYSTR str)
+    public: iStringT(LPCYSTR str)
     {
         Initialize();
         *this = str;
     }
 
-    public: iCStringT(const unsigned char* str)
+    public: iStringT(const unsigned char* str)
     {
         Initialize();
         *this = str;
     }
 
-    public: iCStringT(LPCXSTR str, int length)
+    public: iStringT(LPCXSTR str, int length)
     {
         Initialize();
         AssignCopy(length, str);
     }
 
-    public: iCStringT(LPCYSTR str, int length)
+    public: iStringT(LPCYSTR str, int length)
     {
         Initialize();
         AssignConvertCopy(length, str);
     }
 
-    public: ~iCStringT()
+    public: iStringT(XCHAR ch, int length = 1)
+    {
+        Initialize();
+
+        if (length > 0)
+        {
+            LPXSTR buffer = GetBuffer(length);
+            FloodCharacters(buffer, ch, length);
+            ReleaseBuffer(length);
+        }
+    }
+
+    public: ~iStringT()
     {
         if (GetData()->refs != CHNIL)
         {
@@ -123,7 +135,12 @@ class iStringT
         }
     }
 
-    public: const iCStringT& operator = (const iCStringT& str)
+    protected: void Initialize()
+    {
+        stringData = GetEmptyString().stringData;
+    }
+
+    public: const iStringT& operator = (const iStringT& str)
     {
         if (stringData != str.stringData)
         {
@@ -141,233 +158,233 @@ class iStringT
         return *this;
     }
 
-    public: const iCStringT& operator = (const VARIANT& vt)
+    public: const iStringT& operator = (const VARIANT& vt)
     {
         VARIANT result;
         VariantInit(&result);
 
-        if (SUCCEEDED(::VariantChangeType(&result, const_cast<VARIANT*>(&vt), 0, VT_BSTR)))
+        if (SUCCEEDED(VariantChangeType(&result, const_cast<VARIANT*>(&vt), 0, VT_BSTR)))
             *this = V_BSTR(&result);
 
         return *this;
     }
 
-    public: const iCStringT& operator = (LPCXSTR str)
+    public: const iStringT& operator = (LPCXSTR str)
     {
         AssignCopy(StringLength(str), str);
         return *this;
     }
 
-    public: const iCStringT& operator = (LPCYSTR str)
+    public: const iStringT& operator = (LPCYSTR str)
     {
         AssignConvertCopy(StringLength(str), str);
         return *this;
     }
 
-    public: const iCStringT& operator = (const unsigned char* str)
+    public: const iStringT& operator = (const unsigned char* str)
     {
         return (operator = ((LPCSTR)str));
     }
 
-    public: const iCStringT& operator = (XCHAR ch)
+    public: const iStringT& operator = (XCHAR ch)
     {
         XCHAR ach[2] = { ch, 0 };
         return (operator = (ach));
     }
 
-    public: const iCStringT& operator = (YCHAR ch)
+    public: const iStringT& operator = (YCHAR ch)
     {
         YCHAR ach[2] = { ch, 0 };
         return (operator = (ach));
     }
 
-    public: const iCStringT& operator += (const iCStringT& str)
+    public: const iStringT& operator += (const iStringT& str)
     {
         Append(str.GetData()->dataLength, str.stringData);
         return *this;
     }
 
-    public: const iCStringT& operator += (const VARIANT& vt)
+    public: const iStringT& operator += (const VARIANT& vt)
     {
-        iCStringT str(vt);
+        iStringT str(vt);
         return (operator += (str));
     }
 
-    public: const iCStringT& operator += (LPCXSTR str)
+    public: const iStringT& operator += (LPCXSTR str)
     {
         ASSERT(str);
         Append(StringLength(str), str);
         return *this;
     }
 
-    public: const iCStringT& operator += (LPCYSTR str)
+    public: const iStringT& operator += (LPCYSTR str)
     {
-        iCStringT str(str);
+        iStringT str(str);
         return (operator += (str));
     }
 
-    public: const iCStringT& operator += (const unsigned char* str)
+    public: const iStringT& operator += (const unsigned char* str)
     {
         return (operator += ((LPCSTR)str));
     }
 
-    public: const iCStringT& operator += (XCHAR ch)
+    public: const iStringT& operator += (XCHAR ch)
     {
         XCHAR ach[2] = { ch, 0 };
         return (operator += (ach));
     }
 
-    public: const iCStringT& operator += (YCHAR ch)
+    public: const iStringT& operator += (YCHAR ch)
     {
         YCHAR ach[2] = { ch, 0 };
         return (operator += (ach));
     }
 
-    friend iCStringT operator + (const iCStringT& str1, const iCStringT& str2)
+    friend iStringT operator + (const iStringT& str1, const iStringT& str2)
     {
-        iCStringT s;
+        iStringT s;
         s.Concatenate(str1.GetData()->dataLength, str1.stringData, str2.GetData()->dataLength, str2.stringData);
         return s;
     }
 
-    friend iCStringT operator + (const iCStringT& str1, LPCXSTR str2)
+    friend iStringT operator + (const iStringT& str1, LPCXSTR str2)
     {
         ASSERT(str2);
-        iCStringT s;
+        iStringT s;
         s.Concatenate(str1.GetData()->dataLength, str1.stringData, StringLength(str2), str2);
         return s;
     }
 
-    friend iCStringT operator + (LPCXSTR str1, const iCStringT& str2)
+    friend iStringT operator + (LPCXSTR str1, const iStringT& str2)
     {
         ASSERT(str1);
-        iCStringT s;
+        iStringT s;
         s.Concatenate(StringLength(str1), str1, str2.GetData()->dataLength, str2.stringData);
         return s;
     }
 
-    friend iCStringT operator + (const iCStringT& str, XCHAR ch)
+    friend iStringT operator + (const iStringT& str, XCHAR ch)
     {
-        iCStringT s;
+        iStringT s;
         s.Concatenate(str.GetData()->dataLength, str.stringData, 1, &ch);
         return s;
     }
 
-    friend iCStringT operator + (XCHAR ch, const iCStringT& str)
+    friend iStringT operator + (XCHAR ch, const iStringT& str)
     {
-        iCStringT s;
+        iStringT s;
         s.Concatenate(1, &ch, str.GetData()->dataLength, str.stringData);
         return s;
     }
 
-    friend iCStringT operator + (const iCStringT& str1, LPCYSTR str2)
+    friend iStringT operator + (const iStringT& str1, LPCYSTR str2)
     {
-        return str1 + iCStringT(str2);
+        return str1 + iStringT(str2);
     }
 
-    friend iCStringT operator + (LPCYSTR str1, const iCStringT& str2)
+    friend iStringT operator + (LPCYSTR str1, const iStringT& str2)
     {
-        return iCStringT(str1) + str2;
+        return iStringT(str1) + str2;
     }
 
-    friend iCStringT operator + (const iCStringT& str, YCHAR ch)
+    friend iStringT operator + (const iStringT& str, YCHAR ch)
     {
         YCHAR ach[2] = { ch, 0 };
         return str + ach;
     }
 
-    friend iCStringT operator + (YCHAR ch, const iCStringT& str)
+    friend iStringT operator + (YCHAR ch, const iStringT& str)
     {
         YCHAR ach[2] = { ch, 0 };
         return ach + str;
     }
 
-    friend BOOL operator == (const iCStringT& str1, const iCStringT& str2)
+    friend BOOL operator == (const iStringT& str1, const iStringT& str2)
     {
         return (str1.Compare(str2) == 0);
     }
 
-    friend BOOL operator == (const iCStringT& str1, LPCXSTR str2)
+    friend BOOL operator == (const iStringT& str1, LPCXSTR str2)
     {
         return (str1.Compare(str2) == 0);
     }
 
-    friend BOOL operator == (LPCXSTR str1, const iCStringT& str2)
+    friend BOOL operator == (LPCXSTR str1, const iStringT& str2)
     {
         return (str2.Compare(str1) == 0);
     }
 
-    friend BOOL operator != (const iCStringT& str1, const iCStringT& str2)
+    friend BOOL operator != (const iStringT& str1, const iStringT& str2)
     {
         return (str1.Compare(str2) != 0);
     }
 
-    friend BOOL operator != (const iCStringT& str1, LPCXSTR str2)
+    friend BOOL operator != (const iStringT& str1, LPCXSTR str2)
     {
         return (str1.Compare(str2) != 0);
     }
 
-    friend BOOL operator != (LPCXSTR str1, const iCStringT& str2)
+    friend BOOL operator != (LPCXSTR str1, const iStringT& str2)
     {
         return (str2.Compare(str1) != 0);
     }
 
-    friend BOOL operator < (const iCStringT& str1, const iCStringT& str2)
+    friend BOOL operator < (const iStringT& str1, const iStringT& str2)
     {
         return (str1.Compare(str2) < 0);
     }
 
-    friend BOOL operator < (const iCStringT& str1, LPCXSTR str2)
+    friend BOOL operator < (const iStringT& str1, LPCXSTR str2)
     {
         return (str1.Compare(str2) < 0);
     }
 
-    friend BOOL operator < (LPCXSTR str1, const iCStringT& str2)
+    friend BOOL operator < (LPCXSTR str1, const iStringT& str2)
     {
         return (str2.Compare(str1) > 0);
     }
 
-    friend BOOL operator > (const iCStringT& str1, const iCStringT& str2)
+    friend BOOL operator > (const iStringT& str1, const iStringT& str2)
     {
         return (str1.Compare(str2) > 0);
     }
 
-    friend BOOL operator > (const iCStringT& str1, LPCXSTR str2)
+    friend BOOL operator > (const iStringT& str1, LPCXSTR str2)
     {
         return (str1.Compare(str2) > 0);
     }
 
-    friend BOOL operator > (LPCXSTR str1, const iCStringT& str2)
+    friend BOOL operator > (LPCXSTR str1, const iStringT& str2)
     {
         return (str2.Compare(str1) < 0);
     }
 
-    friend BOOL operator <= (const iCStringT& str1, const iCStringT& str2)
+    friend BOOL operator <= (const iStringT& str1, const iStringT& str2)
     {
         return (str1.Compare(str2) <= 0);
     }
 
-    friend BOOL operator <= (const iCStringT& str1, LPCXSTR str2)
+    friend BOOL operator <= (const iStringT& str1, LPCXSTR str2)
     {
         return (str1.Compare(str2) <= 0);
     }
 
-    friend BOOL operator <= (LPCXSTR str1, const iCStringT& str2)
+    friend BOOL operator <= (LPCXSTR str1, const iStringT& str2)
     {
         return (str2.Compare(str1) >= 0);
     }
 
-    friend BOOL operator >= (const iCStringT& str1, const iCStringT& str2)
+    friend BOOL operator >= (const iStringT& str1, const iStringT& str2)
     {
         return (str1.Compare(str2) >= 0);
     }
 
-    friend BOOL operator >= (const iCStringT& str1, LPCXSTR str2)
+    friend BOOL operator >= (const iStringT& str1, LPCXSTR str2)
     {
         return (str1.Compare(str2) >= 0);
     }
 
-    friend BOOL operator >= (LPCXSTR str1, const iCStringT& str2)
+    friend BOOL operator >= (LPCXSTR str1, const iStringT& str2)
     {
         return (str2.Compare(str1) <= 0);
     }
@@ -458,9 +475,9 @@ class iStringT
         return CollateNoCase(stringData, str);
     }
 
-    public: iCStringT Split(int index, TCHAR seperator)
+    public: iStringT Split(int index, TCHAR seperator)
     {
-        iCStringT result;
+        iStringT result;
         LPXSTR str = stringData;
 
         while (index--)
@@ -481,9 +498,9 @@ class iStringT
         return result;
     }
 
-    public: iCStringT Split(int index, LPCXSTR seperator)
+    public: iStringT Split(int index, LPCXSTR seperator)
     {
-        iCStringT result;
+        iStringT result;
         LPXSTR str = stringData;
         int step = StringLength(seperator);
 
@@ -505,9 +522,9 @@ class iStringT
         return result;
     }
 
-    public: iList<iCStringT> Split(TCHAR seperator)
+    public: iList<iStringT> Split(TCHAR seperator)
     {
-        iList<iCStringT> result;
+        iList<iStringT> result;
         LPXSTR str = stringData;
 
         while (str != NULL)
@@ -516,7 +533,7 @@ class iStringT
             int length = (end == NULL) ? StringLength(str) : (int)(end - str);
             ASSERT(length >= 0);
 
-            iCStringT token;
+            iStringT token;
             memcpy_s(token.GetBufferSetLength(length), length * sizeof(XCHAR), str, length * sizeof(XCHAR));
             token.ReleaseBuffer();
             result.AddTail(token);
@@ -531,9 +548,9 @@ class iStringT
         return result;
     }
 
-    public: iList<iCStringT> Split(LPCXSTR seperator)
+    public: iList<iStringT> Split(LPCXSTR seperator)
     {
-        iList<iCStringT> result;
+        iList<iStringT> result;
         LPXSTR str = stringData;
         int step = StringLength(seperator);
 
@@ -543,7 +560,7 @@ class iStringT
             int length = (end == NULL) ? StringLength(str) : (int)(end - str);
             ASSERT(length >= 0);
 
-            iCStringT token;
+            iStringT token;
             memcpy_s(token.GetBufferSetLength(length), length * sizeof(XCHAR), str, length * sizeof(XCHAR));
             token.ReleaseBuffer();
             result.AddTail(token);
@@ -558,7 +575,7 @@ class iStringT
         return result;
     }
 
-    public: iCStringT Mid(int first, int count) const
+    public: iStringT Mid(int first, int count) const
     {
         if (first < 0)
             first = 0;
@@ -578,18 +595,18 @@ class iStringT
         if (first == 0 && first + count == GetData()->dataLength)
             return *this;
 
-        iCStringT result;
+        iStringT result;
         AllocCopy(result, count, first, 0);
 
         return result;
     }
 
-    public: iCStringT Mid(int first) const
+    public: iStringT Mid(int first) const
     {
         return Mid(first, GetData()->dataLength - first);
     }
 
-    public: iCStringT Left(int count) const
+    public: iStringT Left(int count) const
     {
         if (count < 0)
             count = 0;
@@ -597,13 +614,13 @@ class iStringT
         if (count >= GetData()->dataLength)
             return *this;
 
-        iCStringT result;
+        iStringT result;
         AllocCopy(result, count, 0, 0);
 
         return result;
     }
 
-    public: iCStringT Right(int count) const
+    public: iStringT Right(int count) const
     {
         if (count < 0)
             count = 0;
@@ -611,19 +628,19 @@ class iStringT
         if (count >= GetData()->dataLength)
             return *this;
 
-        iCStringT result;
+        iStringT result;
         AllocCopy(result, count, GetData()->dataLength - count, 0);
 
         return result;
     }
 
-    public: iCStringT SpanIncluding(LPCXSTR charSet) const
+    public: iStringT SpanIncluding(LPCXSTR charSet) const
     {
         ASSERT(charSet);
         return Left(SpanIncluding(stringData, charSet));
     }
 
-    public: iCStringT SpanExcluding(LPCXSTR charSet) const
+    public: iStringT SpanExcluding(LPCXSTR charSet) const
     {
         ASSERT(charSet);
         return Left(SpanExcluding(stringData, charSet));
@@ -852,7 +869,7 @@ class iStringT
 
             if (GetData()->allocLength < newLength || GetData()->refs > 1)
             {
-                iCStringDataT<T>* oldData = GetData();
+                iStringDataT<T>* oldData = GetData();
                 LPXSTR temp = stringData;
                 AllocBuffer(newLength);
                 memcpy(stringData, temp, oldData->dataLength * sizeof(XCHAR));
@@ -923,7 +940,7 @@ class iStringT
 
         if (GetData()->allocLength < newLength)
         {
-            iCStringDataT<T>* oldData = GetData();
+            iStringDataT<T>* oldData = GetData();
             LPXSTR temp = stringData;
             AllocBuffer(newLength);
             memcpy(stringData, temp, (oldData->dataLength + 1) * sizeof(XCHAR));
@@ -956,7 +973,7 @@ class iStringT
 
             if (GetData()->allocLength < newLength)
             {
-                iCStringDataT<T>* oldData = GetData();
+                iStringDataT<T>* oldData = GetData();
                 LPXSTR temp = stringData;
                 AllocBuffer(newLength);
                 memcpy(stringData, temp, (oldData->dataLength + 1) * sizeof(XCHAR));
@@ -1056,11 +1073,9 @@ class iStringT
     {
         va_list args;
         va_start(args, format);
-        LPXSTR temp;
 
-        if (::FormatMessage(
-            FORMAT_MESSAGE_FROM_STRING | FORMAT_MESSAGE_ALLOCATE_BUFFER,
-            format, 0, 0, (LPXSTR)&temp, 0, &args) != 0 && temp != NULL)
+        LPXSTR temp;
+        if (::FormatMessage(FORMAT_MESSAGE_FROM_STRING | FORMAT_MESSAGE_ALLOCATE_BUFFER, format, 0, 0, (LPXSTR)&temp, 0, &args) != 0 && temp != NULL)
         {
             *this = temp;
             LocalFree(temp);
@@ -1075,7 +1090,7 @@ class iStringT
 
         if (GetData()->refs > 1 || length > GetData()->allocLength)
         {
-            iCStringDataT<T>* oldData = GetData();
+            iStringDataT<T>* oldData = GetData();
             int oldLength = GetData()->dataLength;
 
             if (length < oldLength)
@@ -1134,7 +1149,7 @@ class iStringT
 
         if (GetData()->dataLength != GetData()->allocLength)
         {
-            iCStringDataT<T>* oldData = GetData();
+            iStringDataT<T>* oldData = GetData();
             AllocBuffer(GetData()->dataLength);
             memcpy(stringData, oldData->GetData(), oldData->dataLength * sizeof(XCHAR));
             ASSERT(stringData[GetData()->dataLength] == '\0');
@@ -1159,11 +1174,6 @@ class iStringT
             GetData()->refs = 1;
     }
 
-    protected: void Initialize()
-    {
-        stringData = GetEmptyString().stringData;
-    }
-
     protected: void Append(int length, LPCXSTR str)
     {
         if (length == 0)
@@ -1171,7 +1181,7 @@ class iStringT
 
         if (GetData()->refs > 1 || GetData()->dataLength + length > GetData()->allocLength)
         {
-            iCStringDataT<T>* oldData = GetData();
+            iStringDataT<T>* oldData = GetData();
             Concatenate(GetData()->dataLength, stringData, length, str);
             ASSERT(oldData != NULL);
             Release(oldData);
@@ -1196,10 +1206,10 @@ class iStringT
         }
     }
 
-    protected: iCStringDataT<T>* GetData() const
+    protected: iStringDataT<T>* GetData() const
     {
         ASSERT(stringData);
-        return ((iCStringDataT<T>*)stringData) - 1;
+        return ((iStringDataT<T>*)stringData) - 1;
     }
 
     protected: void AssignCopy(int length, LPCXSTR str)
@@ -1259,33 +1269,33 @@ class iStringT
         }
         else
         {
-            iCStringDataT<T>* newData;
+            iStringDataT<T>* newData;
 
 #ifdef STRFIXEDALLOC
             if (length <= 64)
             {
-                newData = (iCStringDataT<T>*)alloc64.Alloc();
+                newData = (iStringDataT<T>*)alloc64.Alloc();
                 newData->allocLength = 64;
             }
             else if (length <= 128)
             {
-                newData = (iCStringDataT<T>*)alloc128.Alloc();
+                newData = (iStringDataT<T>*)alloc128.Alloc();
                 newData->allocLength = 128;
             }
             else if (length <= 256)
             {
-                newData = (iCStringDataT<T>*)alloc256.Alloc();
+                newData = (iStringDataT<T>*)alloc256.Alloc();
                 newData->allocLength = 256;
             }
             else if (length <= 512)
             {
-                newData = (iCStringDataT<T>*)alloc512.Alloc();
+                newData = (iStringDataT<T>*)alloc512.Alloc();
                 newData->allocLength = 512;
             }
             else
 #endif
             {
-                newData = (iCStringDataT<T>*) new BYTE[sizeof(iCStringDataT<T>) + (length + 1) * sizeof(XCHAR)];
+                newData = (iStringDataT<T>*) new BYTE[sizeof(iStringDataT<T>) + (length + 1) * sizeof(XCHAR)];
                 newData->allocLength = length;
             }
 
@@ -1300,7 +1310,7 @@ class iStringT
     {
         if (GetData()->refs > 1)
         {
-            iCStringDataT<T>* copy = GetData();
+            iStringDataT<T>* copy = GetData();
             Release();
             AllocBuffer(copy->dataLength);
             memcpy(stringData, copy->GetData(), (copy->dataLength + 1) * sizeof(XCHAR));
@@ -1309,7 +1319,7 @@ class iStringT
         ASSERT(GetData()->refs <= 1);
     }
 
-    protected: void AllocCopy(iCStringT& dest, int copyLength, int copyIndex, int extraLength) const
+    protected: void AllocCopy(iStringT& dest, int copyLength, int copyIndex, int extraLength) const
     {
         int nNewLen = copyLength + extraLength;
         if (nNewLen == 0)
@@ -1323,13 +1333,13 @@ class iStringT
         }
     }
 
-    public: static const iCStringT& GetEmptyString()
+    public: static const iStringT& GetEmptyString()
     {
-        static LPCXSTR nil = (LPCXSTR)(((BYTE*)&initData) + sizeof(iCStringDataT<T>));
-        return *(iCStringT*)&nil;
+        static LPCXSTR nil = (LPCXSTR)(((BYTE*)&initData) + sizeof(iStringDataT<T>));
+        return *(iStringT*)&nil;
     }
 
-    public: static void Release(iCStringDataT<T>* data)
+    public: static void Release(iStringDataT<T>* data)
     {
         if (data->refs != CHNIL)
         {
@@ -1350,7 +1360,7 @@ class iStringT
         return (str == NULL) ? 0 : static_cast<int>(wcslen(str));
     }
 
-    public: static void FreeData(iCStringDataT<T>* data)
+    public: static void FreeData(iStringDataT<T>* data)
     {
         int length = data->allocLength;
 
@@ -1365,7 +1375,7 @@ class iStringT
             alloc512.Free(data);
         else
 #endif
-            delete [] (BYTE*)data;
+        delete [] (BYTE*)data;
     }
 
     public: static void FloodCharacters(LPSTR str, char ch, int repeat)
@@ -1407,19 +1417,6 @@ class iStringT
             wcstr[length] = 0;
 
         return length;
-    }
-
-    public: static BSTR WBSTR2ABSTR(BSTR bstrW)
-    {
-        if (bstrW == NULL)
-            return NULL;
-
-        int length = SysStringLen(bstrW);
-        int bytes = WideCharToMultiByte(CP_ACP, 0, bstrW, length, NULL, NULL, NULL, NULL);
-        BSTR bstrA = SysAllocStringByteLen(NULL, bytes);
-        VERIFY(WideCharToMultiByte(CP_ACP, 0, bstrW, length, (LPSTR)bstrA, bytes, NULL, NULL) == bytes);
-
-        return bstrA;
     }
 
     public: static int Compare(LPCSTR str1, LPCSTR str2)
@@ -1625,24 +1622,24 @@ class iStringT
     }
 };
 
-template <class T> T iCStringT<T>::chNil = '\0';
-template <class T> int iCStringT<T>::initData[] = { CHNIL, 0, 0, 0 };
-template <class T> const iCStringT<T> iCStringT<T>::empty;
+template <class T> T iStringT<T>::chNil = '\0';
+template <class T> int iStringT<T>::initData[] = { CHNIL, 0, 0, 0 };
+template <class T> const iStringT<T> iStringT<T>::empty;
 
 #ifdef STRFIXEDALLOC
-template <class T> iCFixedAlloc iCStringT<T>::alloc64  = iCFixedAlloc(ROUND4( 65 * sizeof(T) + sizeof(iCStringDataT<T>)));
-template <class T> iCFixedAlloc iCStringT<T>::alloc128 = iCFixedAlloc(ROUND4(129 * sizeof(T) + sizeof(iCStringDataT<T>)));
-template <class T> iCFixedAlloc iCStringT<T>::alloc256 = iCFixedAlloc(ROUND4(257 * sizeof(T) + sizeof(iCStringDataT<T>)));
-template <class T> iCFixedAlloc iCStringT<T>::alloc512 = iCFixedAlloc(ROUND4(513 * sizeof(T) + sizeof(iCStringDataT<T>)));
+template <class T> iCFixedAlloc iStringT<T>::alloc64  = iCFixedAlloc(ROUND4( 65 * sizeof(T) + sizeof(iStringDataT<T>)));
+template <class T> iCFixedAlloc iStringT<T>::alloc128 = iCFixedAlloc(ROUND4(129 * sizeof(T) + sizeof(iStringDataT<T>)));
+template <class T> iCFixedAlloc iStringT<T>::alloc256 = iCFixedAlloc(ROUND4(257 * sizeof(T) + sizeof(iStringDataT<T>)));
+template <class T> iCFixedAlloc iStringT<T>::alloc512 = iCFixedAlloc(ROUND4(513 * sizeof(T) + sizeof(iStringDataT<T>)));
 #endif
 
-typedef iCStringT<wchar_t> iCStringW;
-typedef iCStringT<char> iCStringA;
-typedef iCStringT<TCHAR> iCString;
+typedef iStringT<wchar_t> iStringW;
+typedef iStringT<char> iStringA;
+typedef iStringT<TCHAR> iString;
 
-template <> void ConstructElements<iCString>(iCString* elements, int count);
+template <> void ConstructElements<iString>(iString* elements, int count);
 template <> UINT HashKey<LPCWSTR>(LPCWSTR key);
 template <> UINT HashKey<LPCSTR>(LPCSTR key);
-template <> UINT HashKey<const iCString&>(const iCString& key);
+template <> UINT HashKey<const iString&>(const iString& key);
 
 #pragma pack(pop)

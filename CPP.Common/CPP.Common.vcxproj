@@ -150,15 +150,21 @@
     <ClInclude Include="iFixedAlloc.h" />
     <ClInclude Include="iList.h" />
     <ClInclude Include="iMap.h" />
+    <ClInclude Include="iObject.h" />
     <ClInclude Include="iPlex.h" />
+    <ClInclude Include="iPtr.h" />
+    <ClInclude Include="iSingleton.h" />
     <ClInclude Include="iString.h" />
     <ClInclude Include="iTemplate.h" />
     <ClInclude Include="iTrace.h" />
+    <ClInclude Include="iVariant.h" />
     <ClInclude Include="pch.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="iObject.cpp" />
     <ClCompile Include="iString.cpp" />
     <ClCompile Include="iTrace.cpp" />
+    <ClCompile Include="iVariant.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

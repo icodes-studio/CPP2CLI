@@ -3,7 +3,7 @@
 template <class KEY, class VALUE, class ARG_KEY = const KEY&, class ARG_VALUE = const VALUE&>
 class iMap
 {
-    protected: struct iNode
+    public: struct iNode
     {
         public: iNode* next;
         public: UINT hash;
@@ -14,6 +14,7 @@ class iMap
     protected: iNode** hashTable;
     protected: UINT hashTableSize;
     protected: iNode* freeList;
+    protected: iList<iNode*> orderedList;
     protected: struct iPlex* memoryBlocks;
     protected: int memoryBlockSize;
     protected: int itemCount;
@@ -152,6 +153,7 @@ class iMap
         freeList = NULL;
         memoryBlocks->FreeDataChain();
         memoryBlocks = NULL;
+        orderedList.RemoveAll();
     }
 
     public: POSITION GetStartPosition() const
@@ -216,12 +218,17 @@ class iMap
         return hashTableSize;
     }
 
+    public: const iList<iNode*>& ToList() const
+    {
+        return orderedList;
+    }
+
     protected: iNode* NewNode()
     {
         if (freeList == NULL)
         {
-            iPlex* newBlock = iPlex::Create(memoryBlocks, memoryBlockSize, sizeof(iMap::iNode));
-            iMap::iNode* node = (iMap::iNode*) newBlock->GetData();
+            iPlex* newBlock = iPlex::Create(memoryBlocks, memoryBlockSize, sizeof(iNode));
+            iNode* node = (iNode*) newBlock->GetData();
 
             node += memoryBlockSize - 1;
 
@@ -234,7 +241,7 @@ class iMap
 
         ASSERT(freeList != NULL);
 
-        iMap::iNode* node = freeList;
+        iNode* node = freeList;
         freeList = freeList->next;
         itemCount++;
         ASSERT(itemCount > 0);
@@ -242,11 +249,15 @@ class iMap
         ConstructElements<KEY>(&node->key, 1);
         ConstructElements<VALUE>(&node->value, 1);
 
+        orderedList.AddTail(node);
+
         return node;
     }
 
     protected: void FreeNode(iNode* node)
     {
+        orderedList.Remove(node);
+
         DestructElements<VALUE>(&node->value, 1);
         DestructElements<KEY>(&node->key, 1);
 

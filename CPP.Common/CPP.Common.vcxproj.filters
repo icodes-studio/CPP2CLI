@@ -51,6 +51,18 @@
     <ClInclude Include="iString.h">
       <Filter>i</Filter>
     </ClInclude>
+    <ClInclude Include="iPtr.h">
+      <Filter>i</Filter>
+    </ClInclude>
+    <ClInclude Include="iObject.h">
+      <Filter>i</Filter>
+    </ClInclude>
+    <ClInclude Include="iSingleton.h">
+      <Filter>i</Filter>
+    </ClInclude>
+    <ClInclude Include="iVariant.h">
+      <Filter>i</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="iTrace.cpp">
@@ -60,6 +72,12 @@
       <Filter>Common</Filter>
     </ClCompile>
     <ClCompile Include="iString.cpp">
+      <Filter>i</Filter>
+    </ClCompile>
+    <ClCompile Include="iObject.cpp">
+      <Filter>i</Filter>
+    </ClCompile>
+    <ClCompile Include="iVariant.cpp">
       <Filter>i</Filter>
     </ClCompile>
   </ItemGroup>
