@@ -1,4 +1,4 @@
-#include "Common.h"
+#include <i.h>
 #include <fcntl.h>
 #include <io.h>
 
@@ -11,7 +11,6 @@ struct Node
 
 int main()
 {
-    // TRACE
 #ifdef _DEBUG
     _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 #endif
@@ -72,9 +71,6 @@ int main()
 
     memoryBlocks->FreeDataChain();
 
-    // iFixedAlloc
-    // TODO: ...
-
     // iList
     iList<Node> testList;
     for (float f = 0; f < 10.f; f++)
@@ -129,11 +125,17 @@ int main()
     iVariant a("aaaaa");
     iVariant b((long long)1234567891234567891);
     a = b;
-    TRACE(a);
+    TRACE(a); 
+    TRACE(_T("\n"));
     a = (const iVariant*)&b;
     a[_T("1111")] = 10;
     a[_T("222")] = _T("동해물과");
+    a[_T("333")] = _T("333");
     a.Log();
+    auto serialized = a.Serialize();
+    iVariant c;
+    BOOL result = c.Deserialize(serialized);
+    c.Log();
 
     system("pause");
 }

@@ -5,8 +5,8 @@ class iVariant : public VARIANT
     public: typedef iMap<iString, iVariant*> iData;
 
     protected: BOOL dirty;
-    protected: iString value;
-    protected: iVariant::iData data;
+    protected: iString cached;
+    protected: iVariant::iData child;
     protected: static iVariant empty;
 
     public: iVariant()
@@ -657,11 +657,11 @@ class iVariant : public VARIANT
     {
         if (dirty)
         {
-            this->value = *this;
+            cached = *this;
             SetDirty(FALSE);
         }
 
-        return this->value;
+        return cached;
     }
 
     public: operator LPVOID ()
@@ -755,10 +755,10 @@ class iVariant : public VARIANT
         target.MakeUpper();
 
         iVariant* value = NULL;
-        if (!data.Lookup(target, value))
+        if (!child.Lookup(target, value))
         {
             value = new iVariant;
-            data.SetAt(target, value);
+            child.SetAt(target, value);
         }
 
         return (value == NULL) ? empty : *value;
@@ -791,7 +791,7 @@ class iVariant : public VARIANT
         target.MakeUpper();
 
         iVariant* value = NULL;
-        return data.Lookup(target, value);
+        return child.Lookup(target, value);
     }
 
     public: BOOL IsExistKey(INT key) const
@@ -800,7 +800,7 @@ class iVariant : public VARIANT
         target.Format(_T("%d"), key);
 
         iVariant* value = NULL;
-        return data.Lookup(target, value);
+        return child.Lookup(target, value);
     }
 
     public: BOOL IsExistKey(LONG key) const
@@ -809,7 +809,7 @@ class iVariant : public VARIANT
         target.Format(_T("%ld"), key);
 
         iVariant* value = NULL;
-        return data.Lookup(target, value);
+        return child.Lookup(target, value);
     }
 
     public: BOOL IsExistKey(LONGLONG key) const
@@ -818,7 +818,7 @@ class iVariant : public VARIANT
         target.Format(_T("%I64d"), key);
 
         iVariant* value = NULL;
-        return data.Lookup(target, value);
+        return child.Lookup(target, value);
     }
 
     public: iString GetKeyFromValue(iVariant& value)
@@ -826,9 +826,9 @@ class iVariant : public VARIANT
         iString key;
         iVariant* target = NULL;
 
-        for (POSITION pos = data.GetStartPosition(); pos != NULL;)
+        for (POSITION pos = child.GetStartPosition(); pos != NULL;)
         {
-            data.GetNext(pos, key, target);
+            child.GetNext(pos, key, target);
 
             if (target == NULL)
                 continue;
@@ -846,10 +846,10 @@ class iVariant : public VARIANT
         target.MakeUpper();
 
         iVariant* value = NULL;
-        if (data.Lookup(target, value))
+        if (child.Lookup(target, value))
         {
             delete value;
-            data.RemoveKey(target);
+            child.RemoveKey(target);
         }
     }
 
@@ -876,12 +876,12 @@ class iVariant : public VARIANT
 
     public: int GetCount() const
     {
-        return data.GetCount();
+        return child.GetCount();
     }
 
-    public: const iVariant::iData& Data() const
+    public: const iVariant::iData& Child() const
     {
-        return data;
+        return child;
     }
 
     public: void Merge(const iVariant& value)
@@ -889,10 +889,9 @@ class iVariant : public VARIANT
         if (this == &value)
             return;
 
-        const iVariant::iData& vdata = value.data;
-
         iString key;
         iVariant* source;
+        const iVariant::iData& vdata = value.child;
 
         for (POSITION pos = vdata.GetStartPosition(); pos != NULL;)
         {
@@ -908,15 +907,15 @@ class iVariant : public VARIANT
 
     public: void Cleanup()
     {
-        for (POSITION pos = data.GetStartPosition(); pos != NULL;)
+        for (POSITION pos = child.GetStartPosition(); pos != NULL;)
         {
             iString key;
             iVariant* value = NULL;
-            data.GetNext(pos, key, value);
+            child.GetNext(pos, key, value);
             SAFE_DELETE(value);
         }
 
-        data.RemoveAll();
+        child.RemoveAll();
 
         Clear();
     }
@@ -931,7 +930,7 @@ class iVariant : public VARIANT
         if (++tab == 1)
             TRACE(_T("%s\n(\n"), (LPCTSTR)(*this));
 
-        const iList<iData::iNode*>& list = data.ToList();
+        const iList<iData::iNode*>& list = child.ToList();
         for (POSITION pos = list.GetHeadPosition(); pos != NULL;)
         {
             pair = list.GetNext(pos);
@@ -1093,7 +1092,7 @@ class iVariant : public VARIANT
         iString key;
         iVariant* to;
         iVariant* from;
-        const iVariant::iData& vdata = value.data;
+        const iVariant::iData& vdata = value.child;
 
         for (POSITION pos = vdata.GetStartPosition(); pos != NULL;)
         {
@@ -1108,17 +1107,18 @@ class iVariant : public VARIANT
             if (!to) continue;
 
             to->Setup(*from);
-            data[key] = to;
+            child[key] = to;
         }
     }
 
-    public: void Deserialize(LPCTSTR source)
+    public: BOOL Deserialize(LPCTSTR source)
     {
         ASSERT(source);
-        OnDeserialize(source);
+        LPCTSTR result = Deserialize(source, 0);
+        return (result && result[0] == 0);
     }
 
-    protected: LPCTSTR OnDeserialize(LPCTSTR source)
+    protected: LPCTSTR Deserialize(LPCTSTR source, int depth)
     {
         if (source[0] == 'a')
         {
@@ -1142,39 +1142,39 @@ class iVariant : public VARIANT
                     return source + 1;
 
                 iString key;
-                source = OnDeserialize(source, key);
+                source = Deserialize(source, key);
 
                 if (!source)
                     return NULL;
 
-                iVariant* target = new iVariant;
-                source = target->OnDeserialize(source);
+                iVariant* value = new iVariant;
+                source = value->Deserialize(source, depth + 1);
 
                 if (!source)
-                {
-                    delete target;
-                    return NULL;
-                }
-
-                iVariant* value;
-                if (data.Lookup(key, value))
                 {
                     delete value;
-                    data.RemoveKey(key);
+                    return NULL;
                 }
 
-                data.SetAt(key, target);
+                iVariant* temp;
+                if (child.Lookup(key, temp))
+                {
+                    delete temp;
+                    child.RemoveKey(key);
+                }
+
+                child.SetAt(key, value);
             }
         }
 
-        LPCTSTR next = OnDeserialize(source, value);
+        LPCTSTR next = Deserialize(source, cached);
         if (next != NULL)
-            *this = value;
+            *this = cached;
 
         return next;
     }
 
-    protected: LPCTSTR OnDeserialize(LPCTSTR source, iString& target)
+    protected: LPCTSTR Deserialize(LPCTSTR source, iString& target)
     {
         int i;
 
@@ -1232,17 +1232,24 @@ class iVariant : public VARIANT
         return NULL;
     }
 
-    public: void Serialize(iString& target)
+    public: iString Serialize()
+    {
+        iString result;
+        Serialize(result);
+        return result;
+    }
+
+    protected: void Serialize(iString& result)
     {
         iString packet;
-        packet.Format(_T("a:%d:{"), data.GetCount());
-        target += packet;
+        packet.Format(_T("a:%d:{"), child.GetCount());
+        result += packet;
 
-        for (POSITION pos = data.GetStartPosition(); pos;)
+        for (POSITION pos = child.GetStartPosition(); pos;)
         {
             iString key;
             iVariant* value = NULL;
-            data.GetNext(pos, key, value);
+            child.GetNext(pos, key, value);
 
             if (value)
             {
@@ -1251,37 +1258,31 @@ class iVariant : public VARIANT
                 else
                     packet.Format(_T("s:%d:\"%s\";"), key.GetLength(), key);
 
-                target += packet;
+                result += packet;
 
-                if (value->data.GetCount() > 0)
+                if (value->child.GetCount() > 0)
                 {
-                    value->Serialize(target);
+                    value->Serialize(result);
                 }
                 else
                 {
                     LPCTSTR valueToken = *value;
-
-                    if (IsNumeric(valueToken))
-                        packet.Format(_T("i:%s;"), valueToken);
-                    else
+                    if (value->vt == VT_BSTR)
+                    {
                         packet.Format(_T("s:%d:\"%s\";"), _tcslen(valueToken), valueToken);
-
-                    target += packet;
+                    }
+                    else
+                    {
+                        if (IsNumeric(valueToken))
+                            packet.Format(_T("i:%s;"), valueToken);
+                        else
+                            packet.Format(_T("s:%d:\"%s\";"), _tcslen(valueToken), valueToken);
+                    }
+                    result += packet;
                 }
             }
         }
-
-        target += _T("}");
-    }
-
-    public: void DeserializeJSON(LPCTSTR source)
-    {
-        // TODO: ...
-    }
-
-    public: void SerializeJSON(iString& target)
-    {
-        // TODO: ...
+        result += _T("}");
     }
 
     public: static BOOL IsNumeric(const iString& value)

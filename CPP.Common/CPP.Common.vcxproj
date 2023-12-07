@@ -112,7 +112,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>
@@ -130,7 +130,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>
@@ -141,7 +141,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="Common.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="i.h" />
     <ClInclude Include="iArray.h" />
@@ -159,6 +158,44 @@
     <ClInclude Include="iTrace.h" />
     <ClInclude Include="iVariant.h" />
     <ClInclude Include="pch.h" />
+    <ClInclude Include="RapidJSON\allocators.h" />
+    <ClInclude Include="RapidJSON\cursorstreamwrapper.h" />
+    <ClInclude Include="RapidJSON\document.h" />
+    <ClInclude Include="RapidJSON\encodedstream.h" />
+    <ClInclude Include="RapidJSON\encodings.h" />
+    <ClInclude Include="RapidJSON\error\en.h" />
+    <ClInclude Include="RapidJSON\error\error.h" />
+    <ClInclude Include="RapidJSON\filereadstream.h" />
+    <ClInclude Include="RapidJSON\filewritestream.h" />
+    <ClInclude Include="RapidJSON\fwd.h" />
+    <ClInclude Include="RapidJSON\internal\biginteger.h" />
+    <ClInclude Include="RapidJSON\internal\clzll.h" />
+    <ClInclude Include="RapidJSON\internal\diyfp.h" />
+    <ClInclude Include="RapidJSON\internal\dtoa.h" />
+    <ClInclude Include="RapidJSON\internal\ieee754.h" />
+    <ClInclude Include="RapidJSON\internal\itoa.h" />
+    <ClInclude Include="RapidJSON\internal\meta.h" />
+    <ClInclude Include="RapidJSON\internal\pow10.h" />
+    <ClInclude Include="RapidJSON\internal\regex.h" />
+    <ClInclude Include="RapidJSON\internal\stack.h" />
+    <ClInclude Include="RapidJSON\internal\strfunc.h" />
+    <ClInclude Include="RapidJSON\internal\strtod.h" />
+    <ClInclude Include="RapidJSON\internal\swap.h" />
+    <ClInclude Include="RapidJSON\istreamwrapper.h" />
+    <ClInclude Include="RapidJSON\memorybuffer.h" />
+    <ClInclude Include="RapidJSON\memorystream.h" />
+    <ClInclude Include="RapidJSON\msinttypes\inttypes.h" />
+    <ClInclude Include="RapidJSON\msinttypes\stdint.h" />
+    <ClInclude Include="RapidJSON\ostreamwrapper.h" />
+    <ClInclude Include="RapidJSON\pointer.h" />
+    <ClInclude Include="RapidJSON\prettywriter.h" />
+    <ClInclude Include="RapidJSON\rapidjson.h" />
+    <ClInclude Include="RapidJSON\reader.h" />
+    <ClInclude Include="RapidJSON\schema.h" />
+    <ClInclude Include="RapidJSON\stream.h" />
+    <ClInclude Include="RapidJSON\stringbuffer.h" />
+    <ClInclude Include="RapidJSON\uri.h" />
+    <ClInclude Include="RapidJSON\writer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="iObject.cpp" />

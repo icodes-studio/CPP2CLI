@@ -1,63 +1,186 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Common">
-      <UniqueIdentifier>{a873d021-2f22-4805-a36f-39a523e41d51}</UniqueIdentifier>
-    </Filter>
     <Filter Include="i">
       <UniqueIdentifier>{ceb73e58-3db0-4280-9e0d-2be012bc6916}</UniqueIdentifier>
     </Filter>
+    <Filter Include="RapidJSON">
+      <UniqueIdentifier>{762dc905-2af0-4c76-9aa8-a185ee412ff3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="RapidJSON\error">
+      <UniqueIdentifier>{cba506cb-7663-4dd4-b577-f9d8e8c0ae74}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="RapidJSON\internal">
+      <UniqueIdentifier>{77437a82-4604-4a13-a80d-4d3cfcbd6521}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="RapidJSON\msinttypes">
+      <UniqueIdentifier>{2bf40a1c-6685-4ec0-be69-4e8bb119f48d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="System">
+      <UniqueIdentifier>{a873d021-2f22-4805-a36f-39a523e41d51}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Common.h">
-      <Filter>Common</Filter>
-    </ClInclude>
-    <ClInclude Include="i.h">
-      <Filter>i</Filter>
-    </ClInclude>
-    <ClInclude Include="iTrace.h">
-      <Filter>i</Filter>
-    </ClInclude>
     <ClInclude Include="framework.h">
-      <Filter>Common</Filter>
+      <Filter>System</Filter>
     </ClInclude>
     <ClInclude Include="pch.h">
-      <Filter>Common</Filter>
+      <Filter>System</Filter>
     </ClInclude>
-    <ClInclude Include="iBuffer.h">
-      <Filter>i</Filter>
+    <ClInclude Include="RapidJSON\allocators.h">
+      <Filter>RapidJSON</Filter>
     </ClInclude>
-    <ClInclude Include="iAutoLock.h">
-      <Filter>i</Filter>
+    <ClInclude Include="RapidJSON\cursorstreamwrapper.h">
+      <Filter>RapidJSON</Filter>
     </ClInclude>
-    <ClInclude Include="iPlex.h">
-      <Filter>i</Filter>
+    <ClInclude Include="RapidJSON\document.h">
+      <Filter>RapidJSON</Filter>
     </ClInclude>
-    <ClInclude Include="iFixedAlloc.h">
-      <Filter>i</Filter>
+    <ClInclude Include="RapidJSON\encodedstream.h">
+      <Filter>RapidJSON</Filter>
     </ClInclude>
-    <ClInclude Include="iTemplate.h">
-      <Filter>i</Filter>
+    <ClInclude Include="RapidJSON\encodings.h">
+      <Filter>RapidJSON</Filter>
     </ClInclude>
-    <ClInclude Include="iList.h">
+    <ClInclude Include="RapidJSON\filereadstream.h">
+      <Filter>RapidJSON</Filter>
+    </ClInclude>
+    <ClInclude Include="RapidJSON\filewritestream.h">
+      <Filter>RapidJSON</Filter>
+    </ClInclude>
+    <ClInclude Include="RapidJSON\fwd.h">
+      <Filter>RapidJSON</Filter>
+    </ClInclude>
+    <ClInclude Include="RapidJSON\istreamwrapper.h">
+      <Filter>RapidJSON</Filter>
+    </ClInclude>
+    <ClInclude Include="RapidJSON\memorybuffer.h">
+      <Filter>RapidJSON</Filter>
+    </ClInclude>
+    <ClInclude Include="RapidJSON\memorystream.h">
+      <Filter>RapidJSON</Filter>
+    </ClInclude>
+    <ClInclude Include="RapidJSON\ostreamwrapper.h">
+      <Filter>RapidJSON</Filter>
+    </ClInclude>
+    <ClInclude Include="RapidJSON\pointer.h">
+      <Filter>RapidJSON</Filter>
+    </ClInclude>
+    <ClInclude Include="RapidJSON\prettywriter.h">
+      <Filter>RapidJSON</Filter>
+    </ClInclude>
+    <ClInclude Include="RapidJSON\rapidjson.h">
+      <Filter>RapidJSON</Filter>
+    </ClInclude>
+    <ClInclude Include="RapidJSON\reader.h">
+      <Filter>RapidJSON</Filter>
+    </ClInclude>
+    <ClInclude Include="RapidJSON\schema.h">
+      <Filter>RapidJSON</Filter>
+    </ClInclude>
+    <ClInclude Include="RapidJSON\stream.h">
+      <Filter>RapidJSON</Filter>
+    </ClInclude>
+    <ClInclude Include="RapidJSON\stringbuffer.h">
+      <Filter>RapidJSON</Filter>
+    </ClInclude>
+    <ClInclude Include="RapidJSON\uri.h">
+      <Filter>RapidJSON</Filter>
+    </ClInclude>
+    <ClInclude Include="RapidJSON\writer.h">
+      <Filter>RapidJSON</Filter>
+    </ClInclude>
+    <ClInclude Include="RapidJSON\error\en.h">
+      <Filter>RapidJSON\error</Filter>
+    </ClInclude>
+    <ClInclude Include="RapidJSON\error\error.h">
+      <Filter>RapidJSON\error</Filter>
+    </ClInclude>
+    <ClInclude Include="RapidJSON\internal\clzll.h">
+      <Filter>RapidJSON\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="RapidJSON\internal\diyfp.h">
+      <Filter>RapidJSON\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="RapidJSON\internal\dtoa.h">
+      <Filter>RapidJSON\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="RapidJSON\internal\ieee754.h">
+      <Filter>RapidJSON\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="RapidJSON\internal\itoa.h">
+      <Filter>RapidJSON\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="RapidJSON\internal\meta.h">
+      <Filter>RapidJSON\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="RapidJSON\internal\pow10.h">
+      <Filter>RapidJSON\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="RapidJSON\internal\regex.h">
+      <Filter>RapidJSON\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="RapidJSON\internal\stack.h">
+      <Filter>RapidJSON\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="RapidJSON\internal\strfunc.h">
+      <Filter>RapidJSON\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="RapidJSON\internal\strtod.h">
+      <Filter>RapidJSON\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="RapidJSON\internal\swap.h">
+      <Filter>RapidJSON\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="RapidJSON\internal\biginteger.h">
+      <Filter>RapidJSON\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="RapidJSON\msinttypes\inttypes.h">
+      <Filter>RapidJSON\msinttypes</Filter>
+    </ClInclude>
+    <ClInclude Include="RapidJSON\msinttypes\stdint.h">
+      <Filter>RapidJSON\msinttypes</Filter>
+    </ClInclude>
+    <ClInclude Include="i.h">
       <Filter>i</Filter>
     </ClInclude>
     <ClInclude Include="iArray.h">
       <Filter>i</Filter>
     </ClInclude>
+    <ClInclude Include="iAutoLock.h">
+      <Filter>i</Filter>
+    </ClInclude>
+    <ClInclude Include="iBuffer.h">
+      <Filter>i</Filter>
+    </ClInclude>
+    <ClInclude Include="iFixedAlloc.h">
+      <Filter>i</Filter>
+    </ClInclude>
+    <ClInclude Include="iList.h">
+      <Filter>i</Filter>
+    </ClInclude>
     <ClInclude Include="iMap.h">
-      <Filter>i</Filter>
-    </ClInclude>
-    <ClInclude Include="iString.h">
-      <Filter>i</Filter>
-    </ClInclude>
-    <ClInclude Include="iPtr.h">
       <Filter>i</Filter>
     </ClInclude>
     <ClInclude Include="iObject.h">
       <Filter>i</Filter>
     </ClInclude>
+    <ClInclude Include="iPlex.h">
+      <Filter>i</Filter>
+    </ClInclude>
+    <ClInclude Include="iPtr.h">
+      <Filter>i</Filter>
+    </ClInclude>
     <ClInclude Include="iSingleton.h">
+      <Filter>i</Filter>
+    </ClInclude>
+    <ClInclude Include="iString.h">
+      <Filter>i</Filter>
+    </ClInclude>
+    <ClInclude Include="iTemplate.h">
+      <Filter>i</Filter>
+    </ClInclude>
+    <ClInclude Include="iTrace.h">
       <Filter>i</Filter>
     </ClInclude>
     <ClInclude Include="iVariant.h">
@@ -65,16 +188,16 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="iTrace.cpp">
-      <Filter>i</Filter>
-    </ClCompile>
     <ClCompile Include="pch.cpp">
-      <Filter>Common</Filter>
+      <Filter>System</Filter>
+    </ClCompile>
+    <ClCompile Include="iObject.cpp">
+      <Filter>i</Filter>
     </ClCompile>
     <ClCompile Include="iString.cpp">
       <Filter>i</Filter>
     </ClCompile>
-    <ClCompile Include="iObject.cpp">
+    <ClCompile Include="iTrace.cpp">
       <Filter>i</Filter>
     </ClCompile>
     <ClCompile Include="iVariant.cpp">
