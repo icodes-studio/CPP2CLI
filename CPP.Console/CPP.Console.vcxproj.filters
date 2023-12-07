@@ -2,5 +2,10 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClCompile Include="Console.cpp" />
+    <ClCompile Include="JsonTest.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="input.json" />
+    <None Include="output.json" />
   </ItemGroup>
 </Project>

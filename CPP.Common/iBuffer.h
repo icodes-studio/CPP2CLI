@@ -140,7 +140,7 @@ class iBuffer
         Attach(static_cast<T*>(malloc(bytes)));
     }
 
-    private: void ReAllocateHeap(_In_ size_t bytes)
+    private: void ReAllocateHeap(size_t bytes)
     {
         Attach(static_cast<T*>(realloc(buffer, bytes)));
     }

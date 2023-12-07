@@ -10,7 +10,7 @@ class iFixedAlloc
     protected: UINT allocSize;
     protected: UINT blockSize;
     protected: iPlex* blocks;
-    protected: iNode* freeNode;
+    protected: public: iNode* freeNode;
     protected: CRITICAL_SECTION cs;
 
     public: iFixedAlloc(UINT allocSize = 64, UINT blockSize = 64)

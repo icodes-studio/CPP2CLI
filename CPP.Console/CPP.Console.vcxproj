@@ -130,11 +130,16 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Console.cpp" />
+    <ClCompile Include="JsonTest.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CPP.Common\CPP.Common.vcxproj">
       <Project>{c5de8744-94e6-438b-9ef0-43f2e9c6c482}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="input.json" />
+    <None Include="output.json" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

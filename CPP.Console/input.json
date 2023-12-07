@@ -1,0 +1,28 @@
+[
+    {
+        "name": "Milo YIP",
+        "age": 34,
+        "married": true,
+        "dependents": [
+            {
+                "name": "Lua YIP",
+                "age": 3,
+                "education": {
+                    "school": "Happy Kindergarten",
+                    "GPA": 3.5
+                }
+            },
+            {
+                "name": "Mio YIP",
+                "age": 1,
+                "education": null
+            }
+        ]
+    },
+    {
+        "name": "Percy TSE",
+        "age": 30,
+        "married": false,
+        "dependents": []
+    }
+]

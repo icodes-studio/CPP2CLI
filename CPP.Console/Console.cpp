@@ -71,6 +71,19 @@ int main()
 
     memoryBlocks->FreeDataChain();
 
+    // iFixedAlloc
+    int length = 128;
+    iFixedAlloc alloc128 = iFixedAlloc(ROUND4(129 * sizeof(TCHAR) + sizeof(iStringDataT<TCHAR>)), 2);
+    iStringDataT<TCHAR>* newData = (iStringDataT<TCHAR>*)alloc128.Alloc();
+    newData->GetData()[length] = '\0';
+    ASSERT(alloc128.freeNode != NULL);
+    newData = (iStringDataT<TCHAR>*)alloc128.Alloc();
+    newData->GetData()[length] = '\0';
+    ASSERT(alloc128.freeNode == NULL);
+    newData = (iStringDataT<TCHAR>*)alloc128.Alloc();
+    newData->GetData()[length] = '\0';
+    ASSERT(alloc128.freeNode != NULL);
+
     // iList
     iList<Node> testList;
     for (float f = 0; f < 10.f; f++)
@@ -137,5 +150,7 @@ int main()
     BOOL result = c.Deserialize(serialized);
     c.Log();
 
+
     system("pause");
 }
+

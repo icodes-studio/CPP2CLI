@@ -1,5 +1,7 @@
 #pragma once
 
+#define FIXEDALLOC
+
 #define CHNIL INT_MIN
 
 #pragma pack(push, 4)
@@ -50,7 +52,7 @@ class iStringT
     protected: static int initData[];
     public: static const iStringT<T> empty;
 
-#ifdef STRFIXEDALLOC
+#ifdef FIXEDALLOC
     static iFixedAlloc alloc64;
     static iFixedAlloc alloc128;
     static iFixedAlloc alloc256;
@@ -1271,7 +1273,7 @@ class iStringT
         {
             iStringDataT<T>* newData;
 
-#ifdef STRFIXEDALLOC
+#ifdef FIXEDALLOC
             if (length <= 64)
             {
                 newData = (iStringDataT<T>*)alloc64.Alloc();
@@ -1364,7 +1366,7 @@ class iStringT
     {
         int length = data->allocLength;
 
-#ifdef STRFIXEDALLOC
+#ifdef FIXEDALLOC
         if (length == 64)
             alloc64.Free(data);
         else if (length == 128)
@@ -1626,11 +1628,11 @@ template <class T> T iStringT<T>::chNil = '\0';
 template <class T> int iStringT<T>::initData[] = { CHNIL, 0, 0, 0 };
 template <class T> const iStringT<T> iStringT<T>::empty;
 
-#ifdef STRFIXEDALLOC
-template <class T> iCFixedAlloc iStringT<T>::alloc64  = iCFixedAlloc(ROUND4( 65 * sizeof(T) + sizeof(iStringDataT<T>)));
-template <class T> iCFixedAlloc iStringT<T>::alloc128 = iCFixedAlloc(ROUND4(129 * sizeof(T) + sizeof(iStringDataT<T>)));
-template <class T> iCFixedAlloc iStringT<T>::alloc256 = iCFixedAlloc(ROUND4(257 * sizeof(T) + sizeof(iStringDataT<T>)));
-template <class T> iCFixedAlloc iStringT<T>::alloc512 = iCFixedAlloc(ROUND4(513 * sizeof(T) + sizeof(iStringDataT<T>)));
+#ifdef FIXEDALLOC
+template <class T> iFixedAlloc iStringT<T>::alloc64  = iFixedAlloc(ROUND4( 65 * sizeof(T) + sizeof(iStringDataT<T>)));
+template <class T> iFixedAlloc iStringT<T>::alloc128 = iFixedAlloc(ROUND4(129 * sizeof(T) + sizeof(iStringDataT<T>)));
+template <class T> iFixedAlloc iStringT<T>::alloc256 = iFixedAlloc(ROUND4(257 * sizeof(T) + sizeof(iStringDataT<T>)));
+template <class T> iFixedAlloc iStringT<T>::alloc512 = iFixedAlloc(ROUND4(513 * sizeof(T) + sizeof(iStringDataT<T>)));
 #endif
 
 typedef iStringT<wchar_t> iStringW;
