@@ -15,7 +15,9 @@ int main()
     _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 #endif
 
-    TODO(todo warning message);
+    TODO(--------------------);
+    TODO(test warning message);
+    TODO(--------------------);
     float* mleak = new float;
     TRACE(_T("Hello World\n"));
 
@@ -141,11 +143,24 @@ int main()
     TRACE(a); 
     TRACE(_T("\n"));
     a = (const iVariant*)&b;
-    a[_T("1111")] = 10;
+    a[_T("a1111")] = 10;
     a[_T("222")] = _T("동해물과");
     a[_T("333")] = _T("333");
+    a[_T("333")][_T("A")] = _T("AAA");
+    a[_T("333")][_T("B")] = _T("BBB");
+    a[_T("333")][_T("C")] = _T("CCC");
+    a[_T("444")][0] = _T("data-0");
+    a[_T("444")][1] = _T("data-1");
+    a[_T("444")][2] = 2;
+    a[_T("444")][3][0] = 0;
+    a[_T("444")][3][1] = 1;
+    a[_T("444")][3][2] = 2;
+    a[_T("444")][3][3][_T("a")] = _T("AAA");
+    a[_T("444")][3][3][_T("b")] = _T("BBB");
+    a[_T("444")][3][3][_T("c")] = 9.3f;
     a.Log();
     auto serialized = a.Serialize();
+    TRACE(serialized);
     iVariant c;
     BOOL result = c.Deserialize(serialized);
     c.Log();

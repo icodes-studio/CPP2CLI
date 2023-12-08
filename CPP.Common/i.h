@@ -8,8 +8,22 @@
 
 #include <tchar.h>
 #include <mbstring.h>
-#include <oaidl.h>
 #include <iostream>
+
+#include <string>
+#include <vector>
+#include <stack>
+
+#include "rapidjson/document.h"
+#include "rapidjson/reader.h"
+#include "rapidjson/writer.h"
+#include "rapidjson/stringbuffer.h"
+#include "rapidjson/prettywriter.h"
+#include "rapidjson/filereadstream.h"
+#include "rapidjson/filewritestream.h"
+#include "rapidjson/error/en.h"
+
+using namespace rapidjson;
 
 #ifdef _DEBUG
     #ifndef DEBUG_NEW
@@ -90,6 +104,9 @@
 #define BUFSIZE_SUPER  1024
 #define BUFSIZE_MEGA   2048
 #define BUFSIZE_HUGE   4096
+
+#pragma message (__FILE__ "(" STRING(__LINE__) "): TODO: We need to remove the windows dependency")
+#include <oaidl.h>
 
 #include "iTrace.h"
 #include "iBuffer.h"

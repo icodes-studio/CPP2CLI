@@ -2,11 +2,11 @@
 
 class iVariant : public VARIANT
 {
-    public: typedef iMap<iString, iVariant*> iData;
+    public: typedef iMap<iString, iVariant*, LPCTSTR> Array;
 
     protected: BOOL dirty;
-    protected: iString cached;
-    protected: iVariant::iData child;
+    protected: iString stringify;
+    protected: Array child;
     protected: static iVariant empty;
 
     public: iVariant()
@@ -657,11 +657,11 @@ class iVariant : public VARIANT
     {
         if (dirty)
         {
-            cached = *this;
+            stringify = *this;
             SetDirty(FALSE);
         }
 
-        return cached;
+        return stringify;
     }
 
     public: operator LPVOID ()
@@ -675,9 +675,29 @@ class iVariant : public VARIANT
         return NULL;
     }
 
+    public: operator bool ()
+    {
+        return (vt == VT_BOOL) ? (boolVal == VARIANT_TRUE) : (_tstoi((LPCTSTR)(*this)) == VARIANT_TRUE);
+    }
+
+    public: operator CHAR ()
+    {
+        return (vt == VT_I1) ? cVal : (CHAR)_tstoi((LPCTSTR)(*this));
+    }
+
     public: operator BYTE ()
     {
         return (vt == VT_UI1) ? bVal : (BYTE)_tstoi((LPCTSTR)(*this));
+    }
+
+    public: operator SHORT ()
+    {
+        return (vt == VT_I2) ? iVal : (SHORT)_tstoi((LPCTSTR)(*this));
+    }
+
+    public: operator USHORT ()
+    {
+        return (vt == VT_UI2) ? uiVal : (UINT)_tstoi((LPCTSTR)(*this));
     }
 
     public: operator INT ()
@@ -751,14 +771,11 @@ class iVariant : public VARIANT
 
     public: iVariant& operator [] (LPCTSTR key)
     {
-        iString target(key);
-        target.MakeUpper();
-
         iVariant* value = NULL;
-        if (!child.Lookup(target, value))
+        if (!child.Lookup(key, value))
         {
             value = new iVariant;
-            child.SetAt(target, value);
+            child.SetAt(key, value);
         }
 
         return (value == NULL) ? empty : *value;
@@ -787,11 +804,8 @@ class iVariant : public VARIANT
 
     public: BOOL IsExistKey(LPCTSTR key) const
     {
-        iString target(key);
-        target.MakeUpper();
-
         iVariant* value = NULL;
-        return child.Lookup(target, value);
+        return child.Lookup(key, value);
     }
 
     public: BOOL IsExistKey(INT key) const
@@ -842,14 +856,11 @@ class iVariant : public VARIANT
 
     public: void Remove(LPCTSTR key)
     {
-        iString target(key);
-        target.MakeUpper();
-
         iVariant* value = NULL;
-        if (child.Lookup(target, value))
+        if (child.Lookup(key, value))
         {
             delete value;
-            child.RemoveKey(target);
+            child.RemoveKey(key);
         }
     }
 
@@ -879,7 +890,7 @@ class iVariant : public VARIANT
         return child.GetCount();
     }
 
-    public: const iVariant::iData& Child() const
+    public: const iVariant::Array& Child() const
     {
         return child;
     }
@@ -891,14 +902,13 @@ class iVariant : public VARIANT
 
         iString key;
         iVariant* source;
-        const iVariant::iData& vdata = value.child;
 
-        for (POSITION pos = vdata.GetStartPosition(); pos != NULL;)
+        for (POSITION pos = value.child.GetStartPosition(); pos != NULL;)
         {
             source = NULL;
             key.Empty();
 
-            vdata.GetNext(pos, key, source);
+            value.child.GetNext(pos, key, source);
             if (!source) continue;
 
             (operator [] ((LPCTSTR)key)).Setup(*source);
@@ -918,56 +928,6 @@ class iVariant : public VARIANT
         child.RemoveAll();
 
         Clear();
-    }
-
-    public: void Log(int tab = 0)
-    {
-#ifdef _DEBUG
-        iString print;
-        iString temp;
-        const iData::iNode* pair;
-
-        if (++tab == 1)
-            TRACE(_T("%s\n(\n"), (LPCTSTR)(*this));
-
-        const iList<iData::iNode*>& list = child.ToList();
-        for (POSITION pos = list.GetHeadPosition(); pos != NULL;)
-        {
-            pair = list.GetNext(pos);
-            if (!pair->value) continue;
-
-            print = _T("");
-
-            for (int i = 0; i < tab; i++)
-                print += _T("    ");
-
-            temp.Format(_T("[%s] : %s\n"), pair->key, (LPCTSTR)(*pair->value));
-            print += temp;
-
-            if (pair->value->GetCount() > 0)
-            {
-                for (int i = 0; i < tab; i++)
-                    print += _T("    ");
-
-                print += _T("(\n");
-
-                TRACE(_T("%s"), print);
-
-                pair->value->Log(tab);
-                print = _T("");
-
-                for (int i = 0; i < tab; i++)
-                    print += _T("    ");
-
-                print += _T(")\n");
-            }
-
-            TRACE(_T("%s"), print);
-        }
-
-        if (tab == 1)
-            TRACE(_T(")\n"));
-#endif
     }
 
     public: HRESULT Clear()
@@ -1092,15 +1052,14 @@ class iVariant : public VARIANT
         iString key;
         iVariant* to;
         iVariant* from;
-        const iVariant::iData& vdata = value.child;
 
-        for (POSITION pos = vdata.GetStartPosition(); pos != NULL;)
+        for (POSITION pos = value.child.GetStartPosition(); pos != NULL;)
         {
             from = NULL;
             to = NULL;
             key.Empty();
 
-            vdata.GetNext(pos, key, from);
+            value.child.GetNext(pos, key, from);
             if (!from) continue;
 
             to = new iVariant;
@@ -1111,191 +1070,65 @@ class iVariant : public VARIANT
         }
     }
 
-    public: BOOL Deserialize(LPCTSTR source)
+    public: void Log(int tab = 0)
     {
-        ASSERT(source);
-        LPCTSTR result = Deserialize(source, 0);
-        return (result && result[0] == 0);
-    }
+#ifdef _DEBUG
+        iString print;
+        iString temp;
+        const Array::iNode* pair;
 
-    protected: LPCTSTR Deserialize(LPCTSTR source, int depth)
-    {
-        if (source[0] == 'a')
+        if (++tab == 1)
+            TRACE(_T("%s\n(\n"), (LPCTSTR)(*this));
+
+        const iList<Array::iNode*>& list = child.ToList();
+        for (POSITION pos = list.GetHeadPosition(); pos != NULL;)
         {
-            int i;
-            for (i = 1; source[i]; i++)
+            pair = list.GetNext(pos);
+            if (!pair->value) continue;
+
+            print = _T("");
+
+            for (int i = 0; i < tab; i++)
+                print += _T("    ");
+
+            temp.Format(_T("[%s] : %s\n"), pair->key, (LPCTSTR)(*pair->value));
+            print += temp;
+
+            if (pair->value->GetCount() > 0)
             {
-                if (source[i] == '{')
-                    break;
+                for (int i = 0; i < tab; i++)
+                    print += _T("    ");
+
+                print += _T("(\n");
+
+                TRACE(_T("%s"), print);
+
+                pair->value->Log(tab);
+                print = _T("");
+
+                for (int i = 0; i < tab; i++)
+                    print += _T("    ");
+
+                print += _T(")\n");
             }
 
-            source += i;
-
-            if (source[0] != '{')
-                return NULL;
-
-            source++;
-
-            while (TRUE)
-            {
-                if (source[0] == '}')
-                    return source + 1;
-
-                iString key;
-                source = Deserialize(source, key);
-
-                if (!source)
-                    return NULL;
-
-                iVariant* value = new iVariant;
-                source = value->Deserialize(source, depth + 1);
-
-                if (!source)
-                {
-                    delete value;
-                    return NULL;
-                }
-
-                iVariant* temp;
-                if (child.Lookup(key, temp))
-                {
-                    delete temp;
-                    child.RemoveKey(key);
-                }
-
-                child.SetAt(key, value);
-            }
+            TRACE(_T("%s"), print);
         }
 
-        LPCTSTR next = Deserialize(source, cached);
-        if (next != NULL)
-            *this = cached;
-
-        return next;
+        if (tab == 1)
+            TRACE(_T(")\n"));
+#endif
     }
 
-    protected: LPCTSTR Deserialize(LPCTSTR source, iString& target)
-    {
-        int i;
+    public: iString Serialize();
+    public: BOOL Deserialize(LPCTSTR source);
 
-        if (source[0] == 'N')
-            return source + 2;
-
-        else if (source[0] == 'i' || source[0] == 'b' || source[0] == 'd')
-        {
-            source += 2;
-            for (i = 0; source[i]; i++)
-            {
-                if (source[i] == ';')
-                    break;
-            }
-
-            if (source[i] == 0)
-                return NULL;
-
-            target = (iString(source, i));
-
-            return source + i + 1;
-        }
-        else if (source[0] == 's')
-        {
-            if (source[1] != ':')
-                return NULL;
-
-            int length = _tstoi(source + 2);
-
-            for (i = 0; source[i]; i++)
-            {
-                if (source[i] == '"')
-                    break;
-            }
-
-            if (source[i] == 0)
-                return NULL;
-
-            source += i + 1;
-            int available = (int)_tcslen(source);
-            if (length > (available - 2))
-                return NULL;
-
-            if (source[length] != '"')
-                return NULL;
-
-            if (source[length + 1] != ';')
-                return NULL;
-
-            target = (iString(source, length));
-
-            return source += length + 2;
-        }
-
-        return NULL;
-    }
-
-    public: iString Serialize()
-    {
-        iString result;
-        Serialize(result);
-        return result;
-    }
-
-    protected: void Serialize(iString& result)
-    {
-        iString packet;
-        packet.Format(_T("a:%d:{"), child.GetCount());
-        result += packet;
-
-        for (POSITION pos = child.GetStartPosition(); pos;)
-        {
-            iString key;
-            iVariant* value = NULL;
-            child.GetNext(pos, key, value);
-
-            if (value)
-            {
-                if (IsNumeric(key))
-                    packet.Format(_T("i:%s;"), key);
-                else
-                    packet.Format(_T("s:%d:\"%s\";"), key.GetLength(), key);
-
-                result += packet;
-
-                if (value->child.GetCount() > 0)
-                {
-                    value->Serialize(result);
-                }
-                else
-                {
-                    LPCTSTR valueToken = *value;
-                    if (value->vt == VT_BSTR)
-                    {
-                        packet.Format(_T("s:%d:\"%s\";"), _tcslen(valueToken), valueToken);
-                    }
-                    else
-                    {
-                        if (IsNumeric(valueToken))
-                            packet.Format(_T("i:%s;"), valueToken);
-                        else
-                            packet.Format(_T("s:%d:\"%s\";"), _tcslen(valueToken), valueToken);
-                    }
-                    result += packet;
-                }
-            }
-        }
-        result += _T("}");
-    }
-
-    public: static BOOL IsNumeric(const iString& value)
-    {
-        if (value.IsEmpty())
-            return FALSE;
-
-        for (register int i = 0; i < value.GetLength(); ++i)
-        {
-            if (!_istdigit(value[i]))
-                return FALSE;
-        }
-
-        return TRUE;
-    }
+#if 0 // legacy
+    private: void Serialize(iString& result);
+    private: LPCTSTR Deserialize(LPCTSTR source, int depth);
+#else
+    private: void Serialize(Writer<StringBuffer>& writer);
+    private: void Deserialize(Value::ConstMemberIterator& it, const Value& object);
+    private: void Deserialize(Value::ConstValueIterator& it, const Value& value, int index);
+#endif
 };

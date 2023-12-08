@@ -199,121 +199,121 @@ template <typename T> std::string stringify(T x)
     //return ss.str();
 }
 
-struct MyHandler2
-{
-    public: const char* type;
-    public: std::string data;
-
-    public: MyHandler2() : type(), data()
+    struct MyHandler2
     {
-    }
+        public: const char* type;
+        public: std::string data;
 
-    public: bool Null()
-    { 
-        type = "Null";
-        data.clear();
-        return true;
-    }
+        public: MyHandler2() : type(), data()
+        {
+        }
 
-    public: bool Bool(bool b)
-    { 
-        type = "Bool:";
-        data = b ? "true" : "false";
-        return true;
-    }
+        public: bool Null()
+        { 
+            type = "Null";
+            data.clear();
+            return true;
+        }
 
-    public: bool Int(int i)
-    { 
-        type = "Int:"; 
-        data = stringify(i);
-        return true;
-    }
+        public: bool Bool(bool b)
+        { 
+            type = "Bool:";
+            data = b ? "true" : "false";
+            return true;
+        }
 
-    public: bool Uint(unsigned u)
-    { 
-        type = "Uint:"; 
-        data = stringify(u); 
-        return true;
-    }
+        public: bool Int(int i)
+        { 
+            type = "Int:"; 
+            data = stringify(i);
+            return true;
+        }
 
-    public: bool Int64(int64_t i)
-    { 
-        type = "Int64:";
-        data = stringify(i);
-        return true;
-    }
+        public: bool Uint(unsigned u)
+        { 
+            type = "Uint:"; 
+            data = stringify(u); 
+            return true;
+        }
 
-    public: bool Uint64(uint64_t u)
-    {
-        type = "Uint64:";
-        data = stringify(u);
-        return true;
-    }
+        public: bool Int64(int64_t i)
+        { 
+            type = "Int64:";
+            data = stringify(i);
+            return true;
+        }
 
-    public: bool Double(double d)
-    { 
-        type = "Double:";
-        data = stringify(d);
-        return true;
-    }
+        public: bool Uint64(uint64_t u)
+        {
+            type = "Uint64:";
+            data = stringify(u);
+            return true;
+        }
 
-    public: bool RawNumber(const char* str, SizeType length, bool)
-    { 
-        type = "Number:";
-        data = std::string(str, length);
-        return true;
-    }
+        public: bool Double(double d)
+        { 
+            type = "Double:";
+            data = stringify(d);
+            return true;
+        }
 
-    public: bool String(const char* str, SizeType length, bool)
-    { 
-        type = "String:";
-        data = std::string(str, length);
-        return true;
-    }
+        public: bool RawNumber(const char* str, SizeType length, bool)
+        { 
+            type = "Number:";
+            data = std::string(str, length);
+            return true;
+        }
 
-    public: bool StartObject()
-    { 
-        type = "StartObject";
-        data.clear();
-        return true;
-    }
+        public: bool String(const char* str, SizeType length, bool)
+        { 
+            type = "String:";
+            data = std::string(str, length);
+            return true;
+        }
 
-    public: bool Key(const char* str, SizeType length, bool)
-    { 
-        type = "Key:";
-        data = std::string(str, length);
-        return true;
-    }
+        public: bool StartObject()
+        { 
+            type = "StartObject";
+            data.clear();
+            return true;
+        }
 
-    public: bool EndObject(SizeType memberCount)
-    {
-        type = "EndObject:";
-        data = stringify(memberCount);
-        return true;
-    }
+        public: bool Key(const char* str, SizeType length, bool)
+        { 
+            type = "Key:";
+            data = std::string(str, length);
+            return true;
+        }
 
-    public: bool StartArray()
-    {
-        type = "StartArray";
-        data.clear();
-        return true;
-    }
+        public: bool EndObject(SizeType memberCount)
+        {
+            type = "EndObject:";
+            data = stringify(memberCount);
+            return true;
+        }
 
-    public: bool EndArray(SizeType elementCount)
-    {
-        type = "EndArray:";
-        data = stringify(elementCount);
-        return true;
-    }
+        public: bool StartArray()
+        {
+            type = "StartArray";
+            data.clear();
+            return true;
+        }
 
-    // noncopyable
-    private: MyHandler2(const MyHandler2& noCopyConstruction);
-    private: MyHandler2& operator = (const MyHandler2& noAssignment);
-};
+        public: bool EndArray(SizeType elementCount)
+        {
+            type = "EndArray:";
+            data = stringify(elementCount);
+            return true;
+        }
+
+        // noncopyable
+        private: MyHandler2(const MyHandler2& noCopyConstruction);
+        private: MyHandler2& operator = (const MyHandler2& noAssignment);
+    };
 
 XTEST(simplepullreader)
 {
-    const char json[] = " { \"hello\" : \"world\", \"t\" : true , \"f\" : false, \"n\": null, \"i\":123, \"pi\": 3.1416, \"a\":[1, 2, 3, 4] } ";
+    const char json[] = " { \"hello\" : \"¿ùµå\", \"t\" : true , \"f\" : false, \"n\": null, \"i\":123, \"pi\": 3.1416, \"a\":[1, 2, 3, 4] } ";
     StringStream stream(json);
 
     Reader reader;
